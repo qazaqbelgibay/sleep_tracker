@@ -65,6 +65,22 @@ html, body {
   padding: 16px;
   margin-bottom: 16px;
   border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.24);
+}
+
+.coach-card {
+  background: linear-gradient(180deg, rgba(99, 102, 241, 0.12), rgba(30, 41, 59, 0.96));
+  border-color: rgba(129, 140, 248, 0.45);
+}
+
+.stat-chip {
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  background: rgba(129, 140, 248, 0.16);
+  color: #c7d2fe;
 }
 
 .card-title {

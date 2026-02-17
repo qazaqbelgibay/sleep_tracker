@@ -20,11 +20,27 @@ export default function StatsPage() {
 
   const stats = useMemo(() => {
     if (!settings || logs.length === 0) return null
+
+    const sleepMinutes = logs.map((log) => {
+      const [bh, bm] = log.actualBedtime.split(':').map(Number)
+      const [wh, wm] = log.actualWakeTime.split(':').map(Number)
+      const bed = bh * 60 + bm
+      let wake = wh * 60 + wm
+      if (wake <= bed) wake += 1440
+      return wake - bed
+    })
+
+    const avgSleepMin = sleepMinutes.reduce((sum, min) => sum + min, 0) / sleepMinutes.length
+    const sleepPerformance = Math.max(0, Math.min(100, Math.round((avgSleepMin / settings.sleepNeed) * 100)))
+    const avgAwakenings = logs.reduce((sum, l) => sum + l.microAwakenings, 0) / logs.length
+
     return {
       debt: calculateSleepDebt(logs, settings.sleepNeed),
       consistency: consistencyScore(logs),
       avgQuality: averageQuality(logs),
       avgFeeling: averageMorningFeeling(logs),
+      sleepPerformance,
+      avgAwakenings,
       totalLogs: logs.length,
     }
   }, [logs, settings])
@@ -32,6 +48,7 @@ export default function StatsPage() {
   return (
     <div className="page animate-in">
       <h1 className="page-title">Statistics</h1>
+      <p className="text-sm text-muted mb-3">WHOOP-style trends from your diary data.</p>
 
       {/* Range selector */}
       <div className="chip-group mb-3">
@@ -55,6 +72,14 @@ export default function StatsPage() {
         <>
           {/* Summary cards */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+            <div className="card text-center">
+              <div className="card-title">Sleep Performance</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: stats.sleepPerformance >= 90 ? 'var(--success)' : 'var(--warning)' }}>
+                {stats.sleepPerformance}%
+              </div>
+              <div className="text-xs text-muted">need covered</div>
+            </div>
+
             <div className="card text-center">
               <div className="card-title">Sleep Debt</div>
               <div style={{
@@ -91,6 +116,14 @@ export default function StatsPage() {
                 {stats.avgFeeling.toFixed(1)}
               </div>
               <div className="text-xs text-muted">/ 5</div>
+            </div>
+
+            <div className="card text-center">
+              <div className="card-title">Disturbance</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: stats.avgAwakenings <= 1 ? 'var(--success)' : 'var(--warning)' }}>
+                {stats.avgAwakenings.toFixed(1)}
+              </div>
+              <div className="text-xs text-muted">wake-ups / night</div>
             </div>
           </div>
 
