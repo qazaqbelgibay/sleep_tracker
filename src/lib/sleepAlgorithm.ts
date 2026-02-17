@@ -104,10 +104,10 @@ export function calculateSleepPlan(
  * Returns the earliest event of the day minus its prep time.
  */
 export function getWakeTimeForDay(
-  _dayOfWeek: number,
-  entries: { eventTime: string; prepTime: number }[],
+  dayOfWeek: number,
+  entries: { dayOfWeek?: number; eventTime: string; prepTime: number }[],
 ): string | null {
-  const dayEntries = entries.filter(() => true) // all entries for this day
+  const dayEntries = entries.filter((entry) => entry.dayOfWeek === undefined || entry.dayOfWeek === dayOfWeek)
   if (dayEntries.length === 0) return null
 
   // Find earliest event
@@ -118,8 +118,9 @@ export function getWakeTimeForDay(
     const total = hours * 60 + minutes - e.prepTime
     if (total < earliestMinutes) {
       earliestMinutes = total
-      const wH = Math.floor(total / 60)
-      const wM = total % 60
+      const normalized = ((total % 1440) + 1440) % 1440
+      const wH = Math.floor(normalized / 60)
+      const wM = normalized % 60
       bestWake = `${String(wH).padStart(2, '0')}:${String(wM).padStart(2, '0')}`
     }
   }

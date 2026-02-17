@@ -75,6 +75,20 @@ export default function ExperimentPage() {
     const today = new Date().toISOString().slice(0, 10)
     const todaySleep = await db.sleepLogs.where('date').equals(today).first()
 
+    const existing = await db.experimentLogs
+      .where('[experimentId+date]')
+      .equals([exp.id, today])
+      .first()
+
+    if (existing?.id) {
+      await db.experimentLogs.update(existing.id, {
+        applied,
+        value: value || undefined,
+        sleepLogId: todaySleep?.id,
+      })
+      return
+    }
+
     await db.experimentLogs.add({
       experimentId: exp.id,
       date: today,
@@ -83,6 +97,14 @@ export default function ExperimentPage() {
       sleepLogId: todaySleep?.id,
     })
   }
+
+  const adherence = useLiveQuery(async () => {
+    if (!activeExperiment?.id) return null
+    const logs = await db.experimentLogs.where('experimentId').equals(activeExperiment.id).toArray()
+    if (logs.length === 0) return 0
+    const appliedDays = logs.filter((l) => l.applied).length
+    return Math.round((appliedDays / logs.length) * 100)
+  }, [activeExperiment?.id], null)
 
   const getDaysRemaining = (exp: Experiment): number => {
     const start = exp.status === 'testing' ? exp.testingStartDate : exp.baselineStartDate
@@ -98,7 +120,7 @@ export default function ExperimentPage() {
     <div className="page animate-in">
       <h1 className="page-title">Experiments</h1>
       <p className="text-sm text-muted mb-3">
-        Test one variable at a time. 7-day baseline, then 7 days with the variable.
+        CBT-I style variable experiments: keep the plan stable and test one lever at a time.
       </p>
 
       {/* Active experiment */}
@@ -112,6 +134,12 @@ export default function ExperimentPage() {
                 ? 'Baseline: Log normally (no variable)'
                 : `Testing: Apply "${activeExperiment.variable}" tonight`}
             </div>
+
+            {adherence !== null && (
+              <div className="mb-2">
+                <span className="stat-chip">Adherence {adherence}%</span>
+              </div>
+            )}
 
             {activeExperiment.status === 'baseline' && (
               <p className="text-sm text-muted mb-3">

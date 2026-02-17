@@ -39,7 +39,7 @@ export default function SchedulePage() {
     <div className="page animate-in">
       <h1 className="page-title">Schedule</h1>
       <p className="text-sm text-muted mb-3">
-        Add your commitments so the app calculates when to sleep.
+        Add commitments and prep time. Tonight's bedtime is calculated from tomorrow's earliest requirement.
       </p>
 
       {/* Day selector */}

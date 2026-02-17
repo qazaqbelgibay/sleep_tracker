@@ -74,30 +74,30 @@ export default function LogPage() {
 
   return (
     <div className="page animate-in">
-      <h1 className="page-title">Log Sleep</h1>
+      <h1 className="page-title">Sleep Diary</h1>
       <p className="text-sm text-muted mb-3">
-        {existingLog ? 'Editing today\'s entry' : 'How did you sleep last night?'}
+        {existingLog ? 'Editing today\'s diary entry' : 'CBT-I style check-in for last night and this morning.'}
       </p>
 
       {/* Times */}
       <div className="card">
-        <div className="card-title">Times</div>
+        <div className="card-title">Diary Times</div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div className="field">
-            <label>Planned bedtime</label>
+            <label>Target bedtime</label>
             <input type="time" value={plannedBedtime} onChange={(e) => setPlannedBedtime(e.target.value)} />
           </div>
           <div className="field">
-            <label>Actual bedtime</label>
+            <label>Time you got in bed</label>
             <input type="time" value={actualBedtime} onChange={(e) => setActualBedtime(e.target.value)} />
           </div>
           <div className="field">
-            <label>Planned wake</label>
+            <label>Target wake time</label>
             <input type="time" value={plannedWakeTime} onChange={(e) => setPlannedWakeTime(e.target.value)} />
           </div>
           <div className="field">
-            <label>Actual wake</label>
+            <label>Final wake-up time</label>
             <input type="time" value={actualWakeTime} onChange={(e) => setActualWakeTime(e.target.value)} />
           </div>
         </div>
@@ -105,7 +105,7 @@ export default function LogPage() {
 
       {/* Quality */}
       <div className="card">
-        <div className="card-title">Sleep Quality</div>
+        <div className="card-title">Night Quality</div>
         <RatingSelector
           value={sleepQuality}
           onChange={setSleepQuality}
@@ -118,7 +118,7 @@ export default function LogPage() {
 
       {/* Morning feeling */}
       <div className="card">
-        <div className="card-title">Morning Feeling</div>
+        <div className="card-title">Morning State</div>
         <RatingSelector
           value={morningFeeling}
           onChange={setMorningFeeling}
@@ -131,7 +131,7 @@ export default function LogPage() {
 
       {/* Micro-awakenings */}
       <div className="card">
-        <div className="card-title">Micro-awakenings</div>
+        <div className="card-title">Awakenings</div>
         <div className="flex items-center gap-3">
           <button
             className="rating-btn"
@@ -150,17 +150,17 @@ export default function LogPage() {
           </button>
         </div>
         <div className="text-xs text-muted mt-2">
-          Times you woke up during the night
+          Number of times you woke up and remember it
         </div>
       </div>
 
       {/* Notes */}
       <div className="card">
-        <div className="card-title">Notes (optional)</div>
+        <div className="card-title">Context Notes (optional)</div>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Anything notable? Stress, caffeine, exercise..."
+          placeholder="Examples: stress spike, caffeine late, nap, workout timing..."
           rows={3}
           style={{ resize: 'vertical' }}
         />

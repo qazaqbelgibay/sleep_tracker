@@ -84,6 +84,15 @@ class SleepTrackerDB extends Dexie {
       activeGoals: '++id, achieved',
       userSettings: '++id',
     })
+
+    this.version(2).stores({
+      scheduleEntries: '++id, dayOfWeek',
+      sleepLogs: '++id, &date',
+      experiments: '++id, status',
+      experimentLogs: '++id, experimentId, date, [experimentId+date]',
+      activeGoals: '++id, achieved',
+      userSettings: '++id',
+    })
   }
 }
 
